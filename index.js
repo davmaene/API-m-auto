@@ -35,10 +35,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/api-docs', swaggerUi.serve, swaggerUi.setup(docs));
 // read file 
 app.get('/api/ressources/:ressource', (req, res, next) => {
-  const rss = (req.params['resources']);
+  const rss = (req.params['ressource']);
   res
       .status(200)
-      .sendFile(path.resolve(`assets/imgs/${rss}`));
+      .sendFile(path.resolve(`assets/categimages/${rss}`));
   // next();
 })
 app.use('**', (req, res, next) => {
