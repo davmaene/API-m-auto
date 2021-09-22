@@ -33,7 +33,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //intialize endpoint of api documatation  of vesrion 1
 app.use('/api/api-docs', swaggerUi.serve, swaggerUi.setup(docs));
-
+// read file 
+app.get('/api/ressources/:ressource', (req, res, next) => {
+  const rss = (req.params['resources']);
+  res
+      .status(200)
+      .sendFile(path.resolve(`assets/imgs/${rss}`));
+  // next();
+})
 app.use('**', (req, res, next) => {
     res.status(200).send({status : 405, message : 'Resource requested not found on the server'})
 });
