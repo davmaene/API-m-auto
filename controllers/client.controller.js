@@ -127,7 +127,7 @@ const clientController = {
           }
 
         let result = await Client.create({
-            id: Math.random() * 10 * new Date().getMilliseconds(),
+            id: Math.round(Math.random() * 10 * new Date().getMilliseconds()),
             nom,
             email,
             prenom,
@@ -140,7 +140,13 @@ const clientController = {
             photo : photoName,
             created: created,
             modified: created,
-        }).then().catch(er => console.error(er));
+        }).then().catch(er => {
+            res.status(200).json({
+                status: 400,
+                message: "Impossible d'enregistrer cette utilisateur",
+                data: null
+            });
+        });
         if (result) {
             return res.status(200).json({
                 status: 200,
@@ -148,11 +154,6 @@ const clientController = {
                 data: result
             });
         }
-        res.status(200).json({
-            status: 400,
-            message: "Impossible d'enregistrer cette utilisateur",
-            data: null
-        });
     },
 }
 export default clientController;
