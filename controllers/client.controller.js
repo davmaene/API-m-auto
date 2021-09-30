@@ -66,7 +66,7 @@ const clientController = {
     login: async (req, res) => {
         let result = await Client.findOne({
             where: {
-                telephone: req.body.phone
+                telephone: req.body.telephone
             }
         }).then().catch(er => console.error(er));
 
