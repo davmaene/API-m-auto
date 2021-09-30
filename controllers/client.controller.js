@@ -65,11 +65,46 @@ const clientController = {
     },
     login: async (req, res) => {
         try {
-            let result = await Client.findOne({
+            await Client.findOne({
                 where: {
                     telephone: req.body.telephone
                 }
-            }).then().catch(er => {
+            }).then(result => {
+                if (result instanceof Client) {
+                    let is_logged = await bcrypt.compare(req.body.password, result.password);
+                    if (is_logged) {
+                        const token = jwt.sign({
+                                user_id: result.id,
+                                role_id: result.type,
+                            },
+                            process.env.secret_token, 
+                            {
+                                expiresIn: process.env.expire_token
+                            });
+                        return res.status(200).json({
+                            status: 200,
+                            message: "login reussi",
+                            data: {
+                                loged: true,
+                                token,
+                                client: result
+                            }
+                        });
+                    }else{
+                        res.status(200).json({
+                            status: 400,
+                            message: "impossible de connectez cet utilisateur car le mot de passe est incorrect !",
+                            data: null
+                        });
+                    }
+                }else{
+                    res.status(200).json({
+                        status: 400,
+                        message: "impossible de connectez cet utilisateur le numero n'existe pas !",
+                        data: null
+                    });
+                }
+            }).catch(er => {
                 res.status(500).json({
                     status: 500,
                     message: "Une erreur vient de se produire",
@@ -77,40 +112,6 @@ const clientController = {
                 });
             });
             
-            if (result) {
-                let is_logged = await bcrypt.compare(req.body.password, result.password);
-                if (is_logged) {
-                    const token = jwt.sign({
-                            user_id: result.id,
-                            role_id: result.type,
-                        },
-                        process.env.secret_token, 
-                        {
-                            expiresIn: process.env.expire_token
-                        });
-                    return res.status(200).json({
-                        status: 200,
-                        message: "login reussi",
-                        data: {
-                            loged: true,
-                            token,
-                            client: result
-                        }
-                    });
-                }else{
-                    res.status(200).json({
-                        status: 400,
-                        message: "impossible de connectez cet utilisateur car le mot de passe est incorrect !",
-                        data: null
-                    });
-                }
-            }else{
-                res.status(200).json({
-                    status: 400,
-                    message: "impossible de connectez cet utilisateur le numero n'existe pas !",
-                    data: null
-                });
-            }
         } catch (err) {
             res.status(500).json({
                 status: 500,
