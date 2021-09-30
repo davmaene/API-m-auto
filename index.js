@@ -1,11 +1,10 @@
 import express from 'express';
-import bodyparser from 'body-parser';
 import swaggerUi from 'swagger-ui-express';
 import routers from './routes/index';
 import database from './config/database';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import  UploadedFile from 'express-fileupload';
+import UploadedFile from 'express-fileupload';
 import docs from './swagger.json';
 import path from "path";
 
