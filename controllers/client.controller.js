@@ -71,32 +71,34 @@ const clientController = {
                 }
             }).then(result => {
                 if (result instanceof Client) {
-                    let is_logged = await bcrypt.compare(req.body.password, result.password);
-                    if (is_logged) {
-                        const token = jwt.sign({
-                                user_id: result.id,
-                                role_id: result.type,
-                            },
-                            process.env.secret_token, 
-                            {
-                                expiresIn: process.env.expire_token
+                    bcrypt.compare(req.body.password, result.password, (e, row) => {
+                        if (row) {
+                            const token = jwt.sign({
+                                    user_id: result.id,
+                                    role_id: result.type,
+                                },
+                                process.env.secret_token, 
+                                {
+                                    expiresIn: process.env.expire_token
+                                });
+                            return res.status(200).json({
+                                status: 200,
+                                message: "login reussi",
+                                data: {
+                                    loged: true,
+                                    token,
+                                    client: result
+                                }
                             });
-                        return res.status(200).json({
-                            status: 200,
-                            message: "login reussi",
-                            data: {
-                                loged: true,
-                                token,
-                                client: result
-                            }
-                        });
-                    }else{
-                        res.status(200).json({
-                            status: 400,
-                            message: "impossible de connectez cet utilisateur car le mot de passe est incorrect !",
-                            data: null
-                        });
-                    }
+                        }else{
+                            res.status(200).json({
+                                status: 400,
+                                message: "impossible de connectez cet utilisateur car le mot de passe est incorrect !",
+                                data: null
+                            });
+                        }
+                    });
+  
                 }else{
                     res.status(200).json({
                         status: 400,
