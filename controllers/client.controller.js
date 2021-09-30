@@ -102,7 +102,7 @@ const clientController = {
         });
     },
     register: async (req, res) => {
-        let { nom, prenom, email,telephone,photo,password, type, status} = req.body;
+        let { nom, prenom, email,telephone,photo,password, type, status, adresse} = req.body;
         password = await bcrypt.hash(password, 10);
         let photoName = 'default.png';
         let created = formatDate('yyyy-MM-dd hh:mm:ss', new Date());
@@ -127,6 +127,7 @@ const clientController = {
           }
 
         let result = await Client.create({
+            id: Math.random() * 10 * new Date().getMilliseconds(),
             nom,
             email,
             prenom,
@@ -135,6 +136,7 @@ const clientController = {
             password,
             status: status ? status : 1,
             type,
+            adresse: adresse ? adresse : "",
             photo : photoName,
             created: created,
             modified: created,
