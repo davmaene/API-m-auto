@@ -63,7 +63,7 @@ const userController = {
         });
     },
     register: async (req, res) => {
-        let { nom, prenom, email,phone,photo,password, type } = req.body;
+        let { nom, prenom, email,telephone,photo,password, type, status} = req.body;
         password = await bcrypt.hash(password, 10);
         let photoName = 'default.png';
         let created = formatDate('yyyy-MM-dd hh:mm:ss', new Date());
@@ -91,9 +91,10 @@ const userController = {
             nom,
             email,
             prenom,
-            phone,
+            telephone,
             activated : 1,
             password,
+            status: status ? status : 1,
             type,
             photo : photoName,
             created: created,
@@ -102,12 +103,14 @@ const userController = {
         if (result) {
             return res.status(200).json({
                 status: 200,
-                result
+                message: "compte crée avec succès",
+                data: result
             });
         }
         res.status(200).json({
             status: 400,
-            message: "Impossible d'enregistrer cette utilisateur"
+            message: "Impossible d'enregistrer cette utilisateur",
+            data: null
         });
     },
 };
