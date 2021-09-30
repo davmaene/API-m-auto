@@ -16,7 +16,7 @@ const app = express();
 // app.use(bodyparser.urlencoded({extended:true}));
 // app.use(bodyparser.json());
 app.use(cors())
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 app.use("/api", routers);
 
