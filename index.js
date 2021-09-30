@@ -5,6 +5,7 @@ import routers from './routes/index';
 import database from './config/database';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import  UploadedFile from 'express-fileupload';
 import docs from './swagger.json';
 import path from "path";
 
@@ -16,6 +17,7 @@ const app = express();
 app.use(cors())
 app.use(express.urlencoded({extended:false}));
 app.use(express.json());
+app.use(UploadedFile());
 app.use("/api", routers);
 
 app.get('/', (req, res, next) => {
