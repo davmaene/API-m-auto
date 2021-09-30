@@ -6,7 +6,7 @@ const validateKey = async (req, res, next) => {
 
     const key = req.headers.key;
     const app = req.headers.app;
-
+    // console.log(req.headers);
     if (key && app) {
         if (app == process.env.ACESS_APP && key == process.env.ACESS_KEY) {
             return next();

@@ -10,6 +10,20 @@ import helpers from '../helpers/helpers';
 dotenv.config();
 
 const userController = {
+    all: async (req, res) => {
+        await user.findAll({
+            where: {
+                status: 1
+            }
+        })
+        .then(rows => {
+            res.status(200).json({status: 200, message: "requete effectuee avec succes", data: rows})
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({status: 500,message: "une erreur vient de se produire desole", data: err})
+        })
+    },
     login: async (req, res) => {
         let result = await user.findOne({
             where: {
@@ -30,19 +44,22 @@ const userController = {
                     });
                 return res.status(200).json({
                     status: 200,
-                    loged: true,
-                    token,
-                    user: {
-                        id: result.id,
-                        nom: result.username,
-                        email: result.email
+                    message: "login reussi",
+                    data: {
+                        loged: true,
+                        token,
+                        user: {
+                            id: result.id,
+                            nom: result.username,
+                            email: result.email
+                        }
                     }
                 });
             }
         }
         res.status(200).json({
             status: 400,
-            message: "impossible de connectez cette utilisateur"
+            message: "impossible de connectez cet utilisateur"
         });
     },
     register: async (req, res) => {
