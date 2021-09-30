@@ -19,7 +19,8 @@ const userValidation ={
     },
     register:async (req,res,next)=>{
         const schema=joi.object({
-            username:joi.string().min(3).max(50).required(),
+            nom:joi.string().min(3).max(50).required(),
+            prenom:joi.string().min(3).max(50).required(),
             email:joi.string().min(3).max(50),
             phone: joi.string().min(10).required(),
             type : joi.number().required(),

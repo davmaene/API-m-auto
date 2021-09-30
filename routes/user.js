@@ -5,8 +5,8 @@ import userValidation from '../middlewares/userValidation';
 const router = express.Router();
 
 router
-      .post('/login',userValidation.login,userController.login)
-      .post('/register', userValidation.register,userController.register)
+      .post('/login',userController.login) // ,userValidation.login
+      .post('/register',userController.register) // userValidation.register
       .get('/', userController.all)
     
 
