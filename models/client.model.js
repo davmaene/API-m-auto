@@ -41,7 +41,7 @@ const Client = db.define('clients',{
     },
     adresse:{
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
     }
 }, {
     timestamps: false,
