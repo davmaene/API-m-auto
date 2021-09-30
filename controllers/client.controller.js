@@ -65,7 +65,6 @@ const clientController = {
     },
     login: async (req, res) => {
         try {
-            console.log(req.body);
             await Client.findOne({
                 where: {
                     telephone: req.body.telephone
