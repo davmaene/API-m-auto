@@ -68,7 +68,13 @@ const clientController = {
             where: {
                 telephone: req.body.telephone
             }
-        }).then().catch(er => console.error(er));
+        }).then().catch(er => {
+            res.status(500).json({
+                status: 500,
+                message: "Une erreur vient de se produire",
+                data: er
+            });
+        });
 
         if (result) {
             let is_logged = await bcrypt.compare(req.body.password, result.password);
