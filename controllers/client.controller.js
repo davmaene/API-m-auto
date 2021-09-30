@@ -1,3 +1,4 @@
+import db from '../config/database';
 import Client from '../models/client.model'
 import jwt from 'jsonwebtoken';
 import formatDate from 'date-format';
@@ -62,22 +63,8 @@ const clientController = {
               .json({status: 500, message: error})
         })
     },
-    all: async (req, res) => {
-        await user.findAll({
-            where: {
-                status: 1
-            }
-        })
-        .then(rows => {
-            res.status(200).json({status: 200, message: "requete effectuee avec succes", data: rows})
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({status: 500,message: "une erreur vient de se produire desole", data: err})
-        })
-    },
     login: async (req, res) => {
-        let result = await user.findOne({
+        let result = await Client.findOne({
             where: {
                 telephone: req.body.phone
             }
@@ -139,7 +126,7 @@ const clientController = {
             }
           }
 
-        let result = await user.create({
+        let result = await Client.create({
             nom,
             email,
             prenom,
