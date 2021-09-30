@@ -87,19 +87,23 @@ const clientController = {
                     data: {
                         loged: true,
                         token,
-                        user: {
-                            id: result.id,
-                            nom: result.username,
-                            email: result.email
-                        }
+                        client: result
                     }
                 });
+            }else{
+                res.status(200).json({
+                    status: 400,
+                    message: "impossible de connectez cet utilisateur car le mot de passe est incorrect !",
+                    data: null
+                });
             }
+        }else{
+            res.status(200).json({
+                status: 400,
+                message: "impossible de connectez cet utilisateur le numero n'existe pas !",
+                data: null
+            });
         }
-        res.status(200).json({
-            status: 400,
-            message: "impossible de connectez cet utilisateur"
-        });
     },
     register: async (req, res) => {
         let { nom, prenom, email,telephone,photo,password, type, status, adresse} = req.body;
@@ -144,7 +148,7 @@ const clientController = {
             res.status(200).json({
                 status: 400,
                 message: "Impossible d'enregistrer cette utilisateur",
-                data: null
+                data: er
             });
         });
         if (result) {
