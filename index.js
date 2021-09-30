@@ -13,12 +13,11 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
-
-app.use(bodyparser.urlencoded({extended:true}));
-app.use(bodyparser.json());
-
-
+// app.use(bodyparser.urlencoded({extended:true}));
+// app.use(bodyparser.json());
+app.use(cors())
+app.use(express.urlencoded({extended:true}));
+app.use(express.json());
 app.use("/api", routers);
 
 app.get('/', (req, res, next) => {

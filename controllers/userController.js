@@ -63,7 +63,7 @@ const userController = {
         });
     },
     register: async (req, res) => {
-        let { username,email,phone,photo,password, type } = req.body;
+        let { nom, prenom, email,phone,photo,password, type } = req.body;
         password = await bcrypt.hash(password, 10);
         let photoName = 'default.png';
         let created = formatDate('yyyy-MM-dd hh:mm:ss', new Date());
@@ -88,8 +88,9 @@ const userController = {
           }
 
         let result = await user.create({
-            username,
+            nom,
             email,
+            prenom,
             phone,
             activated : 1,
             password,
