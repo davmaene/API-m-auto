@@ -3,7 +3,6 @@ import { include } from "underscore";
 import Categories from "../models/categories";
 
 const CategoriesController = {
-
     listerCategories: async(req, res) => {
         let results = await Categories.findAll({
             where: {
@@ -17,7 +16,6 @@ const CategoriesController = {
         }).catch(er => console.error(er));
 
     },
-
     modifierCategories: async(req, res) => {
 
         Categories.hasMany(produits, { foreignKey: "id" });
@@ -53,7 +51,6 @@ const CategoriesController = {
                     .json({ status: 500, message: error.hasOwnProperty('sqlMessage') ? error['sqlMessage'] : "erreur inconnue du serveur !" })
             })
     },
-
 };
 
 export default CategoriesController;
