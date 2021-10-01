@@ -4,26 +4,26 @@ import dotenv from 'dotenv';
 import base64ToImage from 'base64-to-image';
 import path from "path";
 import { Op } from 'sequelize';
+import database from '../config/database';
 
 dotenv.config();
 
 const productController = {
-
+    raw: () => {
+        await database.query("ALTER TABLE `products` ADD `coverimage` INT NOT NULL AFTER `createdon`;")
+    },
     listerProduits : async (req, res) => {
          let results = await produits.findAll({
-            where: {
-                status: 1
-            }
+            // where: {
+            //     status: 1
+            // }
         }).then((data) => {
             res.status(200).json({
                 status: "200",
                 "produits": data
             })
         }).catch(er => console.error(er));
-
     },
-
-
     rechercherProduits : async (req, res) => {
 
         let query = req.body.query;
