@@ -172,7 +172,9 @@ const clientController = {
             return res.status(200).json({
                 status: 200,
                 message: "compte crée avec succès",
-                data: result
+                data: {
+                    client : result
+                }
             });
         }
     },
