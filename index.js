@@ -33,7 +33,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/api-docs', swaggerUi.serve, swaggerUi.setup(docs));
 // read file 
 app.get('/api/ressources/:ressource', (req, res, next) => {
-  console.log(req.params);
   const rss = (req.params['ressource']);
   res
       .status(200)

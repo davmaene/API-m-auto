@@ -9,9 +9,6 @@ import database from '../config/database';
 dotenv.config();
 
 const productController = {
-    raw: () => {
-        await database.query("ALTER TABLE `products` ADD `coverimage` INT NOT NULL AFTER `createdon`;")
-    },
     listerProduits : async (req, res) => {
          let results = await produits.findAll({
             // where: {
@@ -20,7 +17,8 @@ const productController = {
         }).then((data) => {
             res.status(200).json({
                 status: "200",
-                "produits": data
+                message: "ok",
+                data
             })
         }).catch(er => console.error(er));
     },
@@ -37,7 +35,8 @@ const productController = {
             }).then((data) => {
                 res.status(200).json({
                     status: "200",
-                    "produits": data
+                    message: "ok",
+                    data
                 })
             }).catch(er => console.error(er));
         } else {
