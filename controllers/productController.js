@@ -43,7 +43,7 @@ const productController = {
         if(query){
             produits.findAll({
                 where: {
-                    status: 1,
+                    // status: 1,
                     nom : {[Op.like]: `%${query}%`}
                 }
             }).then((data) => {
