@@ -1,6 +1,7 @@
 import formatDate from 'date-format';
 import produits from '../models/produits';
 import dotenv from 'dotenv';
+import Categories from '../models/categories'
 import base64ToImage from 'base64-to-image';
 import path from "path";
 import { Op } from 'sequelize';
@@ -9,24 +10,12 @@ import database from '../config/database';
 dotenv.config();
 
 const productController = {
-//     // runrow
-//     listerProduits: async () => {
-        
-//     //    await database.query("ALTER TABLE `products` ADD `imgcover` VARCHAR(60) NOT NULL AFTER `nom`")
-//        await database.query("UPDATE `products` SET `imgcover` = 'toyota.jpg' WHERE id = 4")
-//         .then(d => {
-//             console.log(d);
-// // CD Player	Sun Roof	Leather Seat	Alloy Wheels Power Steering	Power Window	A/C	ABS Airbag	Radio	CD Changer	DVD TV	Power Seat	Back Tire	Grill GuardRear Spoiler	Central Locking	Jack	Spare Tire Wheel Spanner	Fog Lights	Back Camera	Push Start Keyless Entry	ESC	360 Degree Camera	Body Kit   Side Airbag	Power Mirror	Side Skirts	Front Lip Spoiler Navigation Turbo
-//         })
-//         .catch(err => {
-//             console.log(err);
-//         })
-//     },
+
     listerProduits : async (req, res) => {
-         let results = await produits.findAll({
-            // where: {
-            //     status: 1
-            // }
+        await produits.findAll({
+            where: {
+                status: 1
+            }
         }).then((data) => {
             res.status(200).json({
                 status: "200",
@@ -41,9 +30,9 @@ const productController = {
         let query = req.body.query;
 
         if(query){
-            produits.findAll({
+            await produits.findAll({
                 where: {
-                    // status: 1,
+                    status: 1,
                     nom : {[Op.like]: `%${query}%`}
                 }
             }).then((data) => {
@@ -56,7 +45,8 @@ const productController = {
         } else {
             res.status(401).json({
                 status: "401",
-                "desciption": "Vous devez renseigner le mot clé de la recherche"
+                message: "Vous devez renseigner le mot clé de la recherche",
+                data: null
             })
         }
     },
@@ -64,25 +54,53 @@ const productController = {
     supprimerProduits : async (req, res) => {
         const {productId} = req.params;
 
-        const product = await produits.findOne({
-            where: {id: productId}
-        });
+        await produits.findOne({
+            where: {
+                id: productId,
+                status: 1
+            }
+        })
+        .then(prd => {
+            if(prd instanceof produits){
+                prd.status = 0;
+                prd.save().then(resolve => {
+                    res.status(200)
+                    .json({status: 200, message: "Produit modifier avec succes", data: prd})
+                })
+                .catch(err => {
+                    res.status(404).json({status: 404, message: "ce produit n'existe pas dans la base pour la suppression !", data: null})
+                })
+
+            }else{
+                res.status(404).json({status: 404, message: "ce produit n'existe pas dans la base pour la suppression !", data: null})
+            }
+        })
+        .catch(err => {
+            res.status(500).json({status: 500, message: "une erreur serveur vient de se produire !", data: err})
+        })
     },
 
     detailsProduit: async (req, res) => {
 
-        let results = await produits.findAll(
+        await produits.findAll(
             {
                 where: {
-                    id: req.params.id
+                    id: parseInt(req.params.id),
+                    status: 1
                 }
             }
         )
             .then(data => {
-                res.status(200).json({ "produits": data });
+                if(data instanceof produits){
+                    res.status(200).json({ data, message: "Ok", status: 200 });
+                }else{
+                    res.status(404).json({ data: null, message: "produit n'existe pas", status: 404 });
+                }
             })
             .catch(err => {
                 res.status(500).send({
+                    status: 500,
+                    data: null,
                     message: "Aucun produit correspondant"
                 });
             });
@@ -90,25 +108,32 @@ const productController = {
     },
 
     produitParCategorie: async (req, res) => {
-        let results = await produits.findAll(
+        await produits.findAll(
             {
                 where: {
-                    category_id: req.params.category_id
+                    category_id: req.params.category_id,
+                    status: 1
                 }
             })
             .then(data => {
-                res.status(200).json({ status: 200, message: "Ok", data });
+                if(data instanceof produits){
+                    res.status(200).json({ status: 200, message: "Ok", data });
+                }else{
+                    res.status(200).json({ status: 200, message: "Aucun produit trouve", data: null });
+                }
             })
             .catch(err => {
                 res.status(500).send({
-                    message: "Aucune category correspondante"
+                    status: 500,
+                    message: "Aucune category correspondante",
+                    data: err
                 });
             });
 
     },
 
     ajouterProduit: async (req, res) => {
-        let results = await produits.create({
+        await produits.create({
             nom: req.body.nom,
             prix: req.body.prix,
             quanitite: req.body.quanitite,
@@ -117,37 +142,22 @@ const productController = {
         }).then((data) => {
             res.status(200).json({
                 status: "200",
-                "produits": data
+                data,
+                message: "OK"
             })
-        }).catch(er => console.error(er));
-
-        if(product){
-            product.update({deleted: new Date(), status: 0})
-            res.status(200).json({
-                status : "200",
-                "desciption" : "Produit supprime avec succes"
-            }) 
-
-        } else {
-            res.status(404).json({
-                status : "404",
-                "desciption" : "Vous devez renseigner le mot clé de la suppression"
-            }) 
-        }
-
-        const product = await produits.findOne({
-            where: { id: productId }
+        }).catch(er => {
+            res.status(500)
+            .json({message: "une erreur vient de se produire", status: 500, data: null})
         });
-
 
     },
 
     modifierProduits: async(req, res) => {
 
-        Produits.hasMany(Categories, { foreignKey: "id" });
-        Categories.belongsTo(Produits, { foreignKey: "produits_id" });
+        produits.hasMany(Categories, { foreignKey: "id" });
+        Categories.belongsTo(produits, { foreignKey: "produits_id" });
 
-        await Produits.findOne({
+        await produits.findOne({
                 where: {
                     id: req.params.ProduitsId,
                     categories_id: req.body.categories_id,
@@ -162,9 +172,17 @@ const productController = {
                 if (mproduits && mproduits instanceof Produits) {
                     mproduits = req.body
                     mproduits.save()
-                    res
+                    .then(resolve => {
+                        res
                         .status(200)
                         .json({ status: 200, message: "Produit modifié avec succès !" })
+                    })
+                    .catch(error => {
+                        res
+                        .status(500)
+                        .json({ status: 500, message: error.hasOwnProperty('sqlMessage') ? error['sqlMessage'] : "erreur inconnue du serveur !" })
+                    })
+
                 } else {
                     res
                         .status(404)
@@ -177,9 +195,6 @@ const productController = {
                     .json({ status: 500, message: error.hasOwnProperty('sqlMessage') ? error['sqlMessage'] : "erreur inconnue du serveur !" })
             })
     }
-
 }
-
-
 
 export default productController;
