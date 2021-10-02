@@ -67,8 +67,6 @@ const productController = {
         const product = await produits.findOne({
             where: {id: productId}
         });
-
-
     },
 
     detailsProduit: async (req, res) => {
