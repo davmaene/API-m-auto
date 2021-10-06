@@ -11,11 +11,11 @@ dotenv.config();
 
 const productController = {
 
-    listerProduits : async (req, res) => {
+    listerProduits: async(req, res) => {
         await produits.findAll({
-            where: {
-                status: 1
-            }
+            // where: {
+            //     status: 1
+            // }
         }).then((data) => {
             res.status(200).json({
                 status: "200",
@@ -24,16 +24,18 @@ const productController = {
             })
         }).catch(er => console.error(er));
     },
-    
-    rechercherProduits : async (req, res) => {
+
+    rechercherProduits: async(req, res) => {
 
         let query = req.body.query;
 
-        if(query){
+        if (query) {
             await produits.findAll({
                 where: {
-                    status: 1,
-                    nom : {[Op.like]: `%${query}%`}
+                    // status: 1,
+                    nom: {
+                        [Op.like]: `%${query}%`
+                    }
                 }
             }).then((data) => {
                 res.status(200).json({
@@ -51,49 +53,47 @@ const productController = {
         }
     },
 
-    supprimerProduits : async (req, res) => {
-        const {productId} = req.params;
+    supprimerProduits: async(req, res) => {
+        const { productId } = req.params;
 
         await produits.findOne({
-            where: {
-                id: productId,
-                status: 1
-            }
-        })
-        .then(prd => {
-            if(prd instanceof produits){
-                prd.status = 0;
-                prd.save().then(resolve => {
-                    res.status(200)
-                    .json({status: 200, message: "Produit modifier avec succes", data: prd})
-                })
-                .catch(err => {
-                    res.status(404).json({status: 404, message: "ce produit n'existe pas dans la base pour la suppression !", data: null})
-                })
-
-            }else{
-                res.status(404).json({status: 404, message: "ce produit n'existe pas dans la base pour la suppression !", data: null})
-            }
-        })
-        .catch(err => {
-            res.status(500).json({status: 500, message: "une erreur serveur vient de se produire !", data: err})
-        })
-    },
-
-    detailsProduit: async (req, res) => {
-
-        await produits.findAll(
-            {
                 where: {
-                    id: parseInt(req.params.id),
+                    id: productId,
                     status: 1
                 }
-            }
-        )
+            })
+            .then(prd => {
+                if (prd instanceof produits) {
+                    prd.status = 0;
+                    prd.save().then(resolve => {
+                            res.status(200)
+                                .json({ status: 200, message: "Produit modifier avec succes", data: prd })
+                        })
+                        .catch(err => {
+                            res.status(404).json({ status: 404, message: "ce produit n'existe pas dans la base pour la suppression !", data: null })
+                        })
+
+                } else {
+                    res.status(404).json({ status: 404, message: "ce produit n'existe pas dans la base pour la suppression !", data: null })
+                }
+            })
+            .catch(err => {
+                res.status(500).json({ status: 500, message: "une erreur serveur vient de se produire !", data: err })
+            })
+    },
+
+    detailsProduit: async(req, res) => {
+
+        await produits.findAll({
+                where: {
+                    id: parseInt(req.params.id),
+                    // status: 1
+                }
+            })
             .then(data => {
-                if(data instanceof produits){
+                if (data instanceof produits) {
                     res.status(200).json({ data, message: "Ok", status: 200 });
-                }else{
+                } else {
                     res.status(404).json({ data: null, message: "produit n'existe pas", status: 404 });
                 }
             })
@@ -107,18 +107,17 @@ const productController = {
 
     },
 
-    produitParCategorie: async (req, res) => {
-        await produits.findAll(
-            {
+    produitParCategorie: async(req, res) => {
+        await produits.findAll({
                 where: {
                     category_id: req.params.category_id,
-                    status: 1
+                    // status: 1
                 }
             })
             .then(data => {
-                if(data instanceof produits){
+                if (data instanceof produits) {
                     res.status(200).json({ status: 200, message: "Ok", data });
-                }else{
+                } else {
                     res.status(200).json({ status: 200, message: "Aucun produit trouve", data: null });
                 }
             })
@@ -132,7 +131,7 @@ const productController = {
 
     },
 
-    ajouterProduit: async (req, res) => {
+    ajouterProduit: async(req, res) => {
         await produits.create({
             nom: req.body.nom,
             prix: req.body.prix,
@@ -147,7 +146,7 @@ const productController = {
             })
         }).catch(er => {
             res.status(500)
-            .json({message: "une erreur vient de se produire", status: 500, data: null})
+                .json({ message: "une erreur vient de se produire", status: 500, data: null })
         });
 
     },
@@ -172,16 +171,16 @@ const productController = {
                 if (mproduits && mproduits instanceof Produits) {
                     mproduits = req.body
                     mproduits.save()
-                    .then(resolve => {
-                        res
-                        .status(200)
-                        .json({ status: 200, message: "Produit modifié avec succès !" })
-                    })
-                    .catch(error => {
-                        res
-                        .status(500)
-                        .json({ status: 500, message: error.hasOwnProperty('sqlMessage') ? error['sqlMessage'] : "erreur inconnue du serveur !" })
-                    })
+                        .then(resolve => {
+                            res
+                                .status(200)
+                                .json({ status: 200, message: "Produit modifié avec succès !" })
+                        })
+                        .catch(error => {
+                            res
+                                .status(500)
+                                .json({ status: 500, message: error.hasOwnProperty('sqlMessage') ? error['sqlMessage'] : "erreur inconnue du serveur !" })
+                        })
 
                 } else {
                     res
